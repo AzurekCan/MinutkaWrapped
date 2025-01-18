@@ -11,13 +11,40 @@
             margin: 0;
             font-family: Arial, sans-serif;
         }
-        header {
-            text-align: center;
-            padding: 20px;
-            font-size: 3em;
-            background-color: #f4f4f4;
-            border-bottom: 2px solid #ccc;
-        }
+            header {
+        text-align: center;
+        padding: 20px;
+        font-size: 3em;
+        background-color: #f4f4f4;
+        border-bottom: 2px solid #ccc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .date-box, .time-box {
+        font-size: 0.3em; /* Smaller font size */
+        font-weight: normal; /* Lighter font weight */
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #currentDateBox {
+        text-align: left;
+        margin-left: 20px;
+        width: 120px; /* Smaller width */
+        text-align: center;
+    }
+
+    #currentTimeBox {
+        text-align: right;
+        margin-right: 20px;
+        width: 120px; /* Smaller width */
+        text-align: center;
+    }
         .content-box {
             padding: 20px;
         }
@@ -130,9 +157,16 @@
 <body>
     
     <header>
+        <div id="currentDateBox" class="date-box"></div>
         Minutka Wrapped
+        <div id="currentTimeBox" class="time-box"></div>
     </header>
-        
+    
+    <section class="content-box">
+        <p class="subheading">Witaj uczniu ALO, zarejestruj się i zapisuj swoje zakupy w sklepie Minutka.</p> 
+        <p class="subheading">Na koniec każdego tygodnia odtwórz swoje Wrapped.</p>
+    </section>   
+
     <div class="login-tab">
         <button id="loginButton">Login</button>
         <button id="signupButton">Sign Up</button>
@@ -155,14 +189,44 @@
         <button id="signupSubmitButton">Sign Up</button>
     </div>
     
-    <section class="content-box">
-        <p class="subheading">Witaj uczniu ALO, zarejestruj się i zapisuj swoje zakupy w sklepie Minutka.</p> 
-        <p class="subheading">Na koniec każdego tygodnia odtwórz swoje Wrapped.</p>
-    </section>
-
     <div class="product-input">
         <input type="text" id="productName" placeholder="Enter Product Name" />
         <button id="addProductButton">Add Product</button>
+        <button id="burgerMenuButton" style="
+            background-color: #004080; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            padding: 10px 20px; 
+            font-size: 1em; 
+            cursor: pointer; 
+            height: 100%; 
+            margin-left: auto; 
+            margin-right: 10px; 
+            display: flex; 
+            align-items: center;
+        ">
+            ☰
+        </button>
+    </div>
+
+    <ul id="burgerMenu" style="
+        display: none;
+        position: absolute;
+        right: 20px; 
+        top: 120px; 
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        list-style: none;
+        padding: 10px;
+        margin: 0;
+        z-index: 100;
+    ">
+        <li style="padding: 10px; cursor: pointer; border-bottom: 1px solid #ccc;">Page 1</li>
+        <li style="padding: 10px; cursor: pointer;">Page 2</li>
+    </ul>
     </div>
 
     <ul class="product-list" id="productList">
@@ -208,7 +272,13 @@ loginSubmitButton.addEventListener('click', () => {
             document.querySelector('.login-tab').style.display = 'none';
             document.querySelector('.product-input').style.display = 'flex';
             document.getElementById('productList').style.display = 'block';
-            loadUserProducts(username);
+            document.querySelector('.content-box').style.display = 'none';
+            document.getElementById('infoMessage').style.display = 'none';
+
+            const currentDate = new Date().toLocaleDateString();
+            document.getElementById('currentDate').textContent = `Products for ${currentDate}`;
+
+            loadUserProducts(username, currentDate);
         } else {
             alert('Incorrect username or password');
         }
@@ -239,52 +309,59 @@ signupSubmitButton.addEventListener('click', () => {
     }
 });
 
-let loggedInUser = null; // Track the currently logged-in user
+let loggedInUser = null;
 
-// Reference the product input elements
 const productNameInput = document.getElementById('productName');
 const addProductButton = document.getElementById('addProductButton');
 const productList = document.getElementById('productList');
 
-// Disable product input by default
 document.querySelector('.product-input').style.display = 'none';
 
-// Event listener for adding a product
 addProductButton.addEventListener('click', () => {
     const productName = productNameInput.value.trim();
-
     if (!productName) {
         alert('Please enter a product name.');
         return;
     }
 
     if (loggedInUser) {
-        console.log(`Adding product: ${productName} for user: ${loggedInUser}`);
-        const userData = JSON.parse(localStorage.getItem(loggedInUser));
+        const currentDate = new Date().toLocaleDateString();
+        
+        let userData = JSON.parse(localStorage.getItem(loggedInUser)) || { products: {} }; 
 
-        // Add the product to the user's product list
-        userData.products.push(productName);
+        if (!userData.products[currentDate]) {
+            userData.products[currentDate] = [];
+        }
+        userData.products[currentDate].push(productName);
         localStorage.setItem(loggedInUser, JSON.stringify(userData));
 
-        // Add product to the UI list
         const listItem = document.createElement('li');
         listItem.innerHTML = `<input type="checkbox" /> ${productName}`;
         productList.appendChild(listItem);
-
-        // Clear the input field
         productNameInput.value = '';
     } else {
         alert('You need to log in to add products.');
     }
 });
 
-// Load user's saved products on login
+function loadUserProducts(username, currentDate) {
+    const userData = JSON.parse(localStorage.getItem(username));
+    if (userData && userData.products && userData.products[currentDate]) {
+        productList.innerHTML = ''; 
+        userData.products[currentDate].forEach((product) => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `<input type="checkbox" /> ${product}`;
+            productList.appendChild(listItem);
+        });
+    }
+}
+
 function loadUserProducts(username) {
     const userData = JSON.parse(localStorage.getItem(username));
 
     if (userData && userData.products) {
         console.log(`Loading products for user: ${username}`, userData.products);
-        productList.innerHTML = ''; // Clear existing list
+        productList.innerHTML = '';
         userData.products.forEach((product) => {
             const listItem = document.createElement('li');
             listItem.innerHTML = `<input type="checkbox" /> ${product}`;
@@ -292,6 +369,40 @@ function loadUserProducts(username) {
         });
     }
 }
+
+function displayCurrentDate() {
+    const currentDate = new Date().toLocaleDateString();
+    document.getElementById('currentDateBox').textContent = `Date: ${currentDate}`;
+}
+
+function displayCurrentTime() {
+    const updateTime = () => {
+        const currentTime = new Date().toLocaleTimeString();
+        document.getElementById('currentTimeBox').textContent = `Time: ${currentTime}`;
+    };
+
+    setInterval(updateTime, 1000);
+}
+
+displayCurrentDate();
+displayCurrentTime();
+
+const burgerMenuButton = document.getElementById('burgerMenuButton');
+    const burgerMenu = document.getElementById('burgerMenu');
+
+    burgerMenuButton.addEventListener('click', () => {
+        if (burgerMenu.style.display === 'none' || burgerMenu.style.display === '') {
+            burgerMenu.style.display = 'block';
+        } else {
+            burgerMenu.style.display = 'none';
+        }
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!burgerMenu.contains(event.target) && !burgerMenuButton.contains(event.target)) {
+            burgerMenu.style.display = 'none';
+        }
+    });
 
 </script>
 </body>
