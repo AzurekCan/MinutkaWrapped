@@ -7,11 +7,11 @@
     <title>Minutka Wrapped</title>
     <style>
         
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
         }
-            header {
+    header {
         text-align: center;
         padding: 20px;
         font-size: 3em;
@@ -23,8 +23,8 @@
     }
 
     .date-box, .time-box {
-        font-size: 0.3em; /* Smaller font size */
-        font-weight: normal; /* Lighter font weight */
+        font-size: 0.3em;
+        font-weight: normal;
         padding: 5px 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
@@ -35,24 +35,27 @@
     #currentDateBox {
         text-align: left;
         margin-left: 20px;
-        width: 120px; /* Smaller width */
+        width: 120px;
         text-align: center;
     }
 
     #currentTimeBox {
         text-align: right;
         margin-right: 20px;
-        width: 120px; /* Smaller width */
+        width: 120px;
         text-align: center;
     }
+
         .content-box {
             padding: 20px;
         }
+
         .subheading {
             font-size: 1.2em;
             margin: 10px 0;
             margin-left: 10px;
         }
+        
         .login-tab {
             display: flex;
             justify-content: center;
@@ -65,6 +68,7 @@
             border-radius: 10px;
             background-color: #f9f9f9;
         }
+
         .login-tab button {
             margin: 0 10px;
             padding: 10px 20px;
@@ -75,15 +79,18 @@
             background-color: #007BFF;
             color: white;
         }
+
         .login-tab button:hover {
             background-color: #0056b3;
         }
+
         .login-form {
             display: none;
             flex-direction: column;
             align-items: center;
             margin-top: 20px;
         }
+
         .login-form input {
             margin: 10px 0;
             padding: 10px;
@@ -93,6 +100,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         .login-form button {
             padding: 10px 20px;
             font-size: 1em;
@@ -105,54 +113,59 @@
         .login-form button:hover {
             background-color: #218838;
         }
+
         button.active {
-        background-color: white;
-        color: #007BFF;
-        border: 2px solid #007BFF;
+            background-color: white;
+            color: #007BFF;
+            border: 2px solid #007BFF;
         }
-        .product-input {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-        }
-        .product-input input {
-            padding: 10px;
-            font-size: 1em;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .product-input button {
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            background-color: #17a2b8;
+
+        .menu-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #000b72;
             color: white;
-            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 18px;
             border: none;
-        }
-        .product-input button:hover {
-            background-color: #138496;
-        }
-        .product-list {
-            margin-top: 20px;
-            list-style-type: none;
-            padding: 0;
-        }
-        .product-list li {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background-color: #f1f1f1;
-            margin: 5px 0;
             border-radius: 5px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
         }
-        .product-list input[type='checkbox']{
-            margin-right: 10px;
+
+        .menu-button .icon {
+            font-size: 24px;
+            align-items: center;
         }
-        </style>
+
+        .menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .menu a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+    </style>
 </head>
 <body>
     
@@ -188,49 +201,15 @@
         <input type="password" placeholder="Confirm Password" id="confirmPassword" />
         <button id="signupSubmitButton">Sign Up</button>
     </div>
-    
-    <div class="product-input">
-        <input type="text" id="productName" placeholder="Enter Product Name" />
-        <button id="addProductButton">Add Product</button>
-        <button id="burgerMenuButton" style="
-            background-color: #004080; 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            padding: 10px 20px; 
-            font-size: 1em; 
-            cursor: pointer; 
-            height: 100%; 
-            margin-left: auto; 
-            margin-right: 10px; 
-            display: flex; 
-            align-items: center;
-        ">
-            ☰
-        </button>
+    <button class="menu-button" onclick="toggleMenu()">
+        <span class="icon">☰</span>
+    </button>
+
+    <div id="menu" class="menu">
+        <a href="#mylist">My List</a>
+        <a href="#daily">Daily</a>
     </div>
 
-    <ul id="burgerMenu" style="
-        display: none;
-        position: absolute;
-        right: 20px; 
-        top: 120px; 
-        background-color: white;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        list-style: none;
-        padding: 10px;
-        margin: 0;
-        z-index: 100;
-    ">
-        <li style="padding: 10px; cursor: pointer; border-bottom: 1px solid #ccc;">Page 1</li>
-        <li style="padding: 10px; cursor: pointer;">Page 2</li>
-    </ul>
-    </div>
-
-    <ul class="product-list" id="productList">
-    </ul>
 
 <script>
 const loginButton = document.getElementById('loginButton');
@@ -267,18 +246,21 @@ loginSubmitButton.addEventListener('click', () => {
         if (userData && userData.password === password) {
             loggedInUser = username;
             alert('Login successful');
+            document.getElementById('infoMessage').style.display = 'none';
             loginForm.style.display = 'none';
             signupForm.style.display = 'none';
             document.querySelector('.login-tab').style.display = 'none';
-            document.querySelector('.product-input').style.display = 'flex';
-            document.getElementById('productList').style.display = 'block';
             document.querySelector('.content-box').style.display = 'none';
             document.getElementById('infoMessage').style.display = 'none';
 
             const currentDate = new Date().toLocaleDateString();
             document.getElementById('currentDate').textContent = `Products for ${currentDate}`;
-
+            menu.style.display = 'block';
             loadUserProducts(username, currentDate);
+
+            
+            const menuButton = document.getElementById('menu-button');
+            menuButton.style.display = 'flex';
         } else {
             alert('Incorrect username or password');
         }
@@ -311,65 +293,6 @@ signupSubmitButton.addEventListener('click', () => {
 
 let loggedInUser = null;
 
-const productNameInput = document.getElementById('productName');
-const addProductButton = document.getElementById('addProductButton');
-const productList = document.getElementById('productList');
-
-document.querySelector('.product-input').style.display = 'none';
-
-addProductButton.addEventListener('click', () => {
-    const productName = productNameInput.value.trim();
-    if (!productName) {
-        alert('Please enter a product name.');
-        return;
-    }
-
-    if (loggedInUser) {
-        const currentDate = new Date().toLocaleDateString();
-        
-        let userData = JSON.parse(localStorage.getItem(loggedInUser)) || { products: {} }; 
-
-        if (!userData.products[currentDate]) {
-            userData.products[currentDate] = [];
-        }
-        userData.products[currentDate].push(productName);
-        localStorage.setItem(loggedInUser, JSON.stringify(userData));
-
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `<input type="checkbox" /> ${productName}`;
-        productList.appendChild(listItem);
-        productNameInput.value = '';
-    } else {
-        alert('You need to log in to add products.');
-    }
-});
-
-function loadUserProducts(username, currentDate) {
-    const userData = JSON.parse(localStorage.getItem(username));
-    if (userData && userData.products && userData.products[currentDate]) {
-        productList.innerHTML = ''; 
-        userData.products[currentDate].forEach((product) => {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `<input type="checkbox" /> ${product}`;
-            productList.appendChild(listItem);
-        });
-    }
-}
-
-function loadUserProducts(username) {
-    const userData = JSON.parse(localStorage.getItem(username));
-
-    if (userData && userData.products) {
-        console.log(`Loading products for user: ${username}`, userData.products);
-        productList.innerHTML = '';
-        userData.products.forEach((product) => {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `<input type="checkbox" /> ${product}`;
-            productList.appendChild(listItem);
-        });
-    }
-}
-
 function displayCurrentDate() {
     const currentDate = new Date().toLocaleDateString();
     document.getElementById('currentDateBox').textContent = `Date: ${currentDate}`;
@@ -387,22 +310,21 @@ function displayCurrentTime() {
 displayCurrentDate();
 displayCurrentTime();
 
-const burgerMenuButton = document.getElementById('burgerMenuButton');
-    const burgerMenu = document.getElementById('burgerMenu');
-
-    burgerMenuButton.addEventListener('click', () => {
-        if (burgerMenu.style.display === 'none' || burgerMenu.style.display === '') {
-            burgerMenu.style.display = 'block';
-        } else {
-            burgerMenu.style.display = 'none';
+function toggleMenu() {
+            const menu = document.getElementById('menu');
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+            }
         }
-    });
 
-    document.addEventListener('click', (event) => {
-        if (!burgerMenu.contains(event.target) && !burgerMenuButton.contains(event.target)) {
-            burgerMenu.style.display = 'none';
+        window.onclick = function(event) {
+            const menu = document.getElementById('menu');
+            if (!event.target.matches('.menu-button') && !event.target.matches('.menu-button *')) {
+                menu.style.display = 'none';
+            }
         }
-    });
 
 </script>
 </body>
